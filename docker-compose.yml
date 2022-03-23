@@ -194,6 +194,9 @@ services:
       context: ./src/ait-installer
       dockerfile: dockerfile
     container_name: "ait-installer"
+    extra_hosts:
+      # refs: https://qiita.com/skobaken/items/03a8b9d0e443745862ac
+      - "host.docker.internal:host-gateway"
     depends_on: 
       - app
       - ip
