@@ -56,8 +56,10 @@ export \
 
 if [ -e /var/run/docker.sock ]; then 
   echo "set permission docker.sock..."
-  chgrp docker /var/run/docker.sock
-  echo airflow | sudo -S chmod 777 /var/run/docker.sock; 
+  # chgrp docker /var/run/docker.sock
+  # echo airflow | sudo -S chmod 777 /var/run/docker.sock; 
+  DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+  sudo groupmod -g ${DOCKER_GID} docker
 fi
 
 # Load DAGs exemples (default: Yes)

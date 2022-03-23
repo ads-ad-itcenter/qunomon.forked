@@ -55,6 +55,7 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        sudo \
     # start docker install
     && apt-get install -yqq \
         apt-transport-https \
