@@ -10,7 +10,7 @@ services:
     container_name: reverse-proxy
     build:
       context: ./src/reverse-proxy/
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     environment:
       - CONTAINER_FLAG=${CONTAINER_FLAG}
     volumes:
@@ -42,7 +42,7 @@ services:
   app:
     build:
       context: ./src/backend/
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     image: app
     container_name: backend
     expose: 
@@ -65,7 +65,7 @@ services:
   psql:
     build:
       context: ./src/storage/psql_12
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     image: psql
     container_name: "psql"
     ports: 
@@ -97,7 +97,7 @@ services:
   ip:
     build:
       context: ./src/integration-provider
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     image: integration-provider
     container_name: ip
     ports: 
@@ -194,6 +194,9 @@ services:
       context: ./src/ait-installer
       dockerfile: dockerfile
     container_name: "ait-installer"
+    extra_hosts:
+      # refs: https://qiita.com/skobaken/items/03a8b9d0e443745862ac
+      - "host.docker.internal:host-gateway"
     depends_on: 
       - app
       - ip

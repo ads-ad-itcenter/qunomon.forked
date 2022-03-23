@@ -41,6 +41,8 @@ TRY_LOOP="20"
 : "${AIRFLOW_HOME:="/usr/local/airflow"}"
 : "${AIRFLOW__CORE__FERNET_KEY:=${FERNET_KEY:=$(python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)")}}"
 : "${AIRFLOW__CORE__EXECUTOR:=${EXECUTOR:-Sequential}Executor}"
+# https://github.com/puckel/docker-airflow/pull/639/files
+: "${AIRFLOW__WEBSERVER__SECRET_KEY:=${SECRET_KEY:=$(python -c "from cryptography.fernet import Fernet; SECRET_KEY = Fernet.generate_key().decode(); print(SECRET_KEY)")}}"
 
 export \
   AIRFLOW_HOME \
@@ -50,11 +52,14 @@ export \
   AIRFLOW__CORE__FERNET_KEY \
   AIRFLOW__CORE__LOAD_EXAMPLES \
   AIRFLOW__CORE__SQL_ALCHEMY_CONN \
+  AIRFLOW__WEBSERVER__SECRET_KEY \
 
 if [ -e /var/run/docker.sock ]; then 
   echo "set permission docker.sock..."
-  chgrp docker /var/run/docker.sock
-  echo airflow | sudo -S chmod 777 /var/run/docker.sock; 
+  # chgrp docker /var/run/docker.sock
+  # echo airflow | sudo -S chmod 777 /var/run/docker.sock; 
+  DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+  sudo groupmod -g ${DOCKER_GID} docker
 fi
 
 # Load DAGs exemples (default: Yes)
